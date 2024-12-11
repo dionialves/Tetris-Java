@@ -13,7 +13,7 @@ public class Tetrimino {
     private int y;
     private int[][] shape;
 
-    private final Rectangle[] block = new Rectangle[4];
+    public final Rectangle[] block = new Rectangle[4];
     private Color color;
 
     public Tetrimino() {
@@ -36,7 +36,7 @@ public class Tetrimino {
 
                     x = this.getX() + (j * Tetrimino.SIZE);
                     y = this.getY() + (i * Tetrimino.SIZE);
-
+                    /*
                     if (y >= PainelGame.TOP) {
 
                         g2d.setColor(this.getColor());
@@ -44,7 +44,11 @@ public class Tetrimino {
 
                         g2d.setColor(Color.black);
                         g2d.drawRect(x, y, Tetrimino.SIZE, Tetrimino.SIZE);
+
+
                     }
+
+                     */
 
                     // aqui setamos a posição x e y do bloco, usando a variável numBlock mpara fazer essa interação.
                     this.setPositionBlock(numBlock, x, y);

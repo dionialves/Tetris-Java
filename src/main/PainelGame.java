@@ -5,7 +5,6 @@ import tetriminoes.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 /*
@@ -22,8 +21,8 @@ Correção de bugs
 public class PainelGame {
     public static final int WIDHT = 360;
     public static final int HEIGHT = 600;
-    private int left;
-    private int right;
+    public static final int LEFT = 20;
+    public static final int RIGHT = PainelGame.LEFT + PainelGame.WIDHT/2;
     public static final int TOP = 40;
     private int bottom;
     private int timer = 0;
@@ -46,11 +45,9 @@ public class PainelGame {
 
     public PainelGame() {
 
-        setLeft(20);
-        setRight(getLeft() + WIDHT/2);
         setBottom(PainelGame.TOP + HEIGHT);
 
-        PainelGame.SHAPE_POSITION_X = (getLeft() + WIDHT /2) - Tetrimino.SIZE;
+        PainelGame.SHAPE_POSITION_X = (PainelGame.LEFT + WIDHT /2) - Tetrimino.SIZE;
         PainelGame.SHAPE_POSITION_Y = 0;
 
         shapes.add(shapeI);
@@ -68,31 +65,25 @@ public class PainelGame {
     }
 
     public void update() {
-
         setTimer(getTimer() + 1);
+
         if (getTimer() % 60 == 0) {
 
+            PainelGame.SHAPE_POSITION_Y+= Tetrimino.SIZE;
 
             // Essa logica não esta legal, muitas erros, necessário refazer
-            if (this.puzzle.hasCollided(this.currentShape)) {
+            if (this.puzzle.hasCollided(this.currentShape, "normal")) {
 
-                puzzle.addShape(this.currentShape.getBlock());
+                puzzle.mergeShapeToMatrix(this.currentShape);
+                puzzle.hasCompleteRow();
 
-                PainelGame.SHAPE_POSITION_X = getLeft() + WIDHT /2 - Tetrimino.SIZE;
+                PainelGame.SHAPE_POSITION_X = PainelGame.LEFT + WIDHT /2 - Tetrimino.SIZE;
                 PainelGame.SHAPE_POSITION_Y = 0;
                 this.randomShape();
 
             }
-            PainelGame.SHAPE_POSITION_Y+= Tetrimino.SIZE;
-            /*
-            else if (this.defineLimitMove("down")) {
 
 
-
-            }
-
-
-             */
         }
     }
 
@@ -100,12 +91,14 @@ public class PainelGame {
 
         g2d.setColor(Color.WHITE);
         g2d.setStroke(new BasicStroke(4f));
-        g2d.drawRect(getLeft()-4, PainelGame.TOP-4, WIDHT+8, HEIGHT+8);
+        g2d.drawRect(PainelGame.LEFT-4, PainelGame.TOP-4, WIDHT+8, HEIGHT+8);
 
         currentShape.setX(PainelGame.SHAPE_POSITION_X);
         currentShape.setY(PainelGame.SHAPE_POSITION_Y);
         currentShape.draw(g2d);
 
+        this.puzzle.clearBoard();
+        this.puzzle.addTemporaryShapeToMatrix(this.currentShape);
         this.puzzle.draw(g2d);
     }
 
@@ -115,58 +108,8 @@ public class PainelGame {
         currentShape.setY(PainelGame.SHAPE_POSITION_Y);
     }
 
-    public boolean defineLimitMove(String direction) {
-        /*
-        Este método precisa ser melhorado, pois fiz para funcionar, preciso melhorar a logica para ficar algo
-        minimamente aceitável
-         */
-        List<Integer> listPositionX = new ArrayList<>();
-        List<Integer> listPositionY = new ArrayList<>();
-
-        listPositionX = currentShape.getPositionBlockX();
-        listPositionY = currentShape.getPositionBlockY();
-        boolean isMoved = true;
-
-        for (int i = 0; i<4 ; i++) {
-
-            if (Objects.equals(direction, "right")) {
-                if (listPositionX.get(i) > (WIDHT - getLeft())) {
-                    isMoved = false;
-
-                }
-            }
-            if (Objects.equals(direction, "left")) {
-                if (listPositionX.get(i) <= this.getLeft()) {
-                    isMoved = false;
-                }
-            }
-            if (Objects.equals(direction, "down")) {
-                if (listPositionY.get(i) >= (this.getBottom() - Tetrimino.SIZE - 8)) {
-                    isMoved = false;
-                }
-            }
-        }
-        return isMoved;
-    }
-
     public void changeRotatedShape() {
         currentShape.changeRotated();
-    }
-
-    public int getLeft() {
-        return left;
-    }
-
-    public void setLeft(int left) {
-        this.left = left;
-    }
-
-    public int getRight() {
-        return right;
-    }
-
-    public void setRight(int right) {
-        this.right = right;
     }
 
     public int getBottom() {

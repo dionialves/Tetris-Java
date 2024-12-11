@@ -72,20 +72,17 @@ public class GameEngine extends JPanel implements Runnable, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-
-            if (pm.defineLimitMove("right")) {
+            if (!pm.puzzle.hasCollided(pm.currentShape, "right")) {
                 PainelGame.SHAPE_POSITION_X+= Tetrimino.SIZE;
             }
-
         }
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            if (pm.defineLimitMove("left")) {
+            if (!pm.puzzle.hasCollided(pm.currentShape, "left")) {
                 PainelGame.SHAPE_POSITION_X-= Tetrimino.SIZE;
             }
-
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            if (!pm.puzzle.hasCollided(pm.currentShape)) {
+            if (!pm.puzzle.hasCollided(pm.currentShape, "down")) {
                 PainelGame.SHAPE_POSITION_Y+= Tetrimino.SIZE;
             }
         }
