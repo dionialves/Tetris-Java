@@ -2,6 +2,9 @@ package tetriminoes;
 
 import java.util.Random;
 
+// Essa classe gerencia a aleatoriedade dos tetris, ela é instanciada em duas variáveis no game, uma sendo o tetris
+// atual que está em uso e outra sendo o próximo tetris que fica sendo exposto no retângulo NEXT.
+// Precisei criar uma classe para manipular a aleatoriedade desses objetos, como pode ser visto no método construtor
 public class TetriminoManager {
     private Tetrimino currentShape;
     private Tetrimino nextShape;

@@ -12,7 +12,6 @@ public class ShapeJ extends Tetrimino {
                 {0, 1},
                 {1, 1}
         };
-
         this.setShape(shape);
     }
 }
