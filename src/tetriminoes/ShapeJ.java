@@ -3,9 +3,9 @@ import java.awt.*;
 
 public class ShapeJ extends Tetrimino {
 
-    public ShapeJ(Color color) {
+    public ShapeJ() {
         super();
-        this.setColor(color);
+        this.setColor(Color.BLUE);
 
         int[][] shape = {
                 {0, 1},

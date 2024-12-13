@@ -34,21 +34,22 @@ public class Puzzle {
             int x = this.coordinateConverter(rectangle.x);
             int y = this.coordinateConverter(rectangle.y);
 
-            RectangleBoard copyRectangle = new RectangleBoard(x, y, rectangle.width, rectangle.height, shape.getColor());
+            if (y < (this.board.length) && x < (this.board[0].length)) {
+                RectangleBoard copyRectangle = new RectangleBoard(x, y, rectangle.width, rectangle.height, shape.getColor());
 
-            if (id == 1) {
-                copyRectangle.setMoving(true);
-            } else if (id == 2) {
-                copyRectangle.setBuild(true);
+                if (id == 1) {
+                    copyRectangle.setMoving(true);
+                } else if (id == 2) {
+                    copyRectangle.setBuild(true);
+                }
+
+                this.board[y][x] = copyRectangle;
             }
-
-            this.board[y][x] = copyRectangle;
         }
     }
 
     public void addTemporaryShapeToMatrix(Tetrimino shape) {
         this.buildMatrix(shape, 1);
-
     }
 
     public void mergeShapeToMatrix(Tetrimino shape) {
@@ -72,31 +73,32 @@ public class Puzzle {
                 rows.add(i);
             }
         }
-
-        // zeras as linhas completas
-        for (int i = 0; i < rows.size(); i++) {
-            for (int j = i; j < board[i].length; j++) {
-                board[rows.get(i)][j].setBuild(false);
+        // Se a linha não estiver vazia
+        if (!rows.isEmpty()) {
+            PainelGame.score.scoreCompletedLines(rows.size());
+            // zeras as linhas completas
+            for (int i = 0; i < rows.size(); i++) {
+                for (int j = i; j < board[i].length; j++) {
+                    board[rows.get(i)][j].setBuild(false);
+                }
             }
-        }
 
-        // pegar as linhas acima da linha completa e baixar todas
-        for (int x = 0; x < rows.size(); x++) {
-            for (int i = rows.get(x); i > 0 ; i--) {
+            // pegar as linhas acima da linha completa e baixar todas
+            for (int x = 0; x < rows.size(); x++) {
+                for (int i = rows.get(x); i > 0 ; i--) {
 
+                    for (int j = 0; j < board[i].length ; j++) {
 
-                //board[i] = board[i - 1];
+                        board[i][j] = board[i-1][j].cloneObject();
 
-                for (int j = 0; j < board[i].length ; j++) {
-
-                    board[i][j] = board[i-1][j].cloneObject();
-
-                    if (board[i][j].isBuild()) {
-                        board[i][j].y++;
+                        if (board[i][j].isBuild()) {
+                            board[i][j].y++;
+                        }
                     }
                 }
             }
         }
+
     }
 
     public void clearBoard() {
@@ -116,52 +118,41 @@ public class Puzzle {
 
     public boolean hasCollided(Tetrimino shape, String direction) {
 
-        for (int i = 0; i < board.length; i++) {
-            System.out.print(i+": ");
-            for (int j = 0; j < board[i].length; j++) {
-                if (board[i][j].isMoving()) {
-                    System.out.print("1 ");
-                } else if (board[i][j].isBuild()) {
-                    System.out.print("2 ");
-                } else {
-                    System.out.print("0 ");
-                }
-            }
-            System.out.println(" ");
-        }
-
         for (Rectangle rectangle : shape.getBlock()) {
 
             int x = this.coordinateConverter(rectangle.x);
             int y = this.coordinateConverter(rectangle.y);
 
-            // Colisão com o fundo
-            if (direction.equals("down") || direction.equals("normal")) {
-                if (y >= (this.board.length - 1)) {
-                    return true;
+            if (y < (this.board.length) && x < (this.board[0].length)) {
+                // Colisão com o fundo
+                if (direction.equals("down") || direction.equals("normal")) {
+                    if (y >= (this.board.length - 1)) {
+                        return true;
+                    }
+                    // Verifica colisão com outro bloco no sentido vertical
+                    if (board[y+1][x].isBuild()) {
+                        return true;
+                    }
                 }
-                // Verifica colisão com outro bloco no sentido vertical
-                if (board[y+1][x].isBuild()) {
-                    return true;
+                if (direction.equals("right")) {
+                    if (x > this.board[y].length) {
+                        return true;
+                    }
+                    if (board[y][x+1].isBuild()) {
+                        return true;
+                    }
+                }
+                if (direction.equals("left")) {
+                    if (x <= 0) {
+                        return true;
+                    }
+                    if (board[y][x-1].isBuild()) {
+                        return true;
+                    }
                 }
             }
-            if (direction.equals("right")) {
-                System.out.println(this.board[y].length);
-                if (x > this.board[y].length) {
-                    return true;
-                }
-                if (board[y][x+1].isBuild()) {
-                    return true;
-                }
-            }
-            if (direction.equals("left")) {
-                if (x <= 0) {
-                    return true;
-                }
-                if (board[y][x-1].isBuild()) {
-                    return true;
-                }
-            }
+
+
         }
         return false;
     }

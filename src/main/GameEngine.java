@@ -9,7 +9,7 @@ import java.awt.event.KeyListener;
 import java.util.List;
 
 public class GameEngine extends JPanel implements Runnable, KeyListener {
-    public static final int WIDTH = 700;
+    public static final int WIDTH = 680;
     public static final int HEIGHT = 720;
     private final int fps = 60;
 
@@ -72,17 +72,17 @@ public class GameEngine extends JPanel implements Runnable, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            if (!pm.puzzle.hasCollided(pm.currentShape, "right")) {
+            if (!pm.puzzle.hasCollided(pm.tetriminoManager.getCurrentShape(), "right")) {
                 PainelGame.SHAPE_POSITION_X+= Tetrimino.SIZE;
             }
         }
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            if (!pm.puzzle.hasCollided(pm.currentShape, "left")) {
+            if (!pm.puzzle.hasCollided(pm.tetriminoManager.getCurrentShape(), "left")) {
                 PainelGame.SHAPE_POSITION_X-= Tetrimino.SIZE;
             }
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            if (!pm.puzzle.hasCollided(pm.currentShape, "down")) {
+            if (!pm.puzzle.hasCollided(pm.tetriminoManager.getCurrentShape(), "down")) {
                 PainelGame.SHAPE_POSITION_Y+= Tetrimino.SIZE;
             }
         }

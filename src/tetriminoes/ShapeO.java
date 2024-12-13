@@ -3,9 +3,9 @@ import java.awt.*;
 
 public class ShapeO extends Tetrimino {
 
-    public ShapeO(Color color) {
+    public ShapeO() {
         super();
-        this.setColor(color);
+        this.setColor(Color.YELLOW);
 
         int[][] shape = {
                 {1, 1},
@@ -13,5 +13,4 @@ public class ShapeO extends Tetrimino {
         };
         this.setShape(shape);
     }
-
 }

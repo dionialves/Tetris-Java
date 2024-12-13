@@ -5,9 +5,9 @@ import java.awt.*;
 
 public class ShapeL extends Tetrimino {
 
-    public ShapeL(Color color) {
+    public ShapeL() {
         super();
-        this.setColor(color);
+        this.setColor(Color.ORANGE);
 
         int[][] shape = {
                 {1, 0},

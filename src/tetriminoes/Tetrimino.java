@@ -3,10 +3,11 @@ package tetriminoes;
 import main.PainelGame;
 
 import java.awt.*;
+import java.util.Random;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tetrimino {
+public class Tetrimino implements Cloneable {
     public static final int SIZE = 20;
 
     private int x;
@@ -17,6 +18,7 @@ public class Tetrimino {
     private Color color;
 
     public Tetrimino() {
+
         block[0] = new Rectangle(SIZE, SIZE);
         block[1] = new Rectangle(SIZE, SIZE);
         block[2] = new Rectangle(SIZE, SIZE);
@@ -25,8 +27,18 @@ public class Tetrimino {
 
     public void draw(Graphics2D g2d) {
 
-        // numBlock será responsável por interar entre o for e definir o número do atributo block dessa mesma classe.
-        int numBlock = 0;
+        for (Rectangle rectangle: this.block) {
+            g2d.setColor(this.getColor());
+            g2d.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+
+            g2d.setColor(Color.black);
+            g2d.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        }
+    }
+
+    public void buildShape() {
+        // Método responsável por popular as coordenadas de x e y de cada bloco
+        int numberBlock = 0;
         int x;
         int y;
 
@@ -36,54 +48,21 @@ public class Tetrimino {
 
                     x = this.getX() + (j * Tetrimino.SIZE);
                     y = this.getY() + (i * Tetrimino.SIZE);
-                    /*
+
+                    // No momento de refatorar o codigo, preciso avaliar a logica por traz dessa condição, de
+                    // y >= PainelGame.TOP, pois se não colocar a mesma os blocos não são apresentados corretamente
+                    // iniciando seu surgimento antes da tela reservada a ele.
+                    // Esta funcionando mas acredito que esse logica de controle de apresentação de deva ser colocada
+                    // aqui
                     if (y >= PainelGame.TOP) {
+                        this.block[numberBlock].x = x;
+                        this.block[numberBlock].y = y;
 
-                        g2d.setColor(this.getColor());
-                        g2d.fillRect(x, y, Tetrimino.SIZE, Tetrimino.SIZE);
-
-                        g2d.setColor(Color.black);
-                        g2d.drawRect(x, y, Tetrimino.SIZE, Tetrimino.SIZE);
-
-
+                        numberBlock++;
                     }
-
-                     */
-
-                    // aqui setamos a posição x e y do bloco, usando a variável numBlock mpara fazer essa interação.
-                    this.setPositionBlock(numBlock, x, y);
-                    numBlock++;
-
                 }
             }
         }
-    }
-
-    public List<Integer> getPositionBlockX() {
-        List<Integer> listPositionX = new ArrayList<>();
-
-        listPositionX.add(block[0].x);
-        listPositionX.add(block[1].x);
-        listPositionX.add(block[2].x);
-        listPositionX.add(block[3].x);
-
-        return listPositionX;
-    }
-
-    public void setPositionBlock(int numberBlock, int x, int y) {
-        this.block[numberBlock].x = x;
-        this.block[numberBlock].y = y;
-    }
-
-    public List<Integer> getPositionBlockY() {
-        List<Integer> listPositionY = new ArrayList<>();
-
-        listPositionY.add(block[0].y);
-        listPositionY.add(block[1].y);
-        listPositionY.add(block[2].y);
-        listPositionY.add(block[3].y);
-
-        return listPositionY;
     }
 
     public void changeRotated() {
@@ -98,6 +77,17 @@ public class Tetrimino {
             }
         }
         this.shape = rotated;
+    }
+
+    @Override
+    public Tetrimino clone() {
+        try {
+            Tetrimino tetrimino = (Tetrimino) super.clone();
+            tetrimino.setShape(this.getShape().clone());
+            return tetrimino;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Erro ao clonar", e);
+        }
     }
 
     public Color getColor() {

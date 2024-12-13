@@ -3,21 +3,12 @@ package main;
 import tetriminoes.*;
 
 import java.awt.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/*
-Implementações:
--> Cria classe para comportar os blocos que serão construídos e definir na mesma quando a linha será apagada.
--> Sistema de pontuação
--> Sistema de leveis aumentando a velocidade de queda do tetris
--> Criar painel contendo o próximo tetris a aparecer no game
-
-Correção de bugs
--> Rotação dos tetris esta estranha, seria bom definir um tetris central e a partir dele rotacionar
-
- */
 public class PainelGame {
     public static final int WIDHT = 360;
     public static final int HEIGHT = 600;
@@ -27,58 +18,55 @@ public class PainelGame {
     private int bottom;
     private int timer = 0;
 
+    Class<?>[] tetriminoClass = {
+            ShapeI.class,
+            ShapeJ.class,
+            ShapeL.class,
+            ShapeO.class,
+            ShapeS.class,
+            ShapeT.class,
+            ShapeZ.class
+    };
+
+    TetriminoManager tetriminoManager = new TetriminoManager();
+    public static final Score score = new Score(40);
+
     public static int SHAPE_POSITION_X;
     public static int SHAPE_POSITION_Y;
 
     public final Puzzle puzzle = new Puzzle();
-
-    private final List<Object> shapes = new ArrayList<>();
-    private final ShapeI shapeI = new ShapeI(Color.CYAN);
-    private final ShapeJ shapeJ = new ShapeJ(Color.BLUE);
-    private final ShapeL shapeL = new ShapeL(Color.ORANGE);
-    private final ShapeO shapeO = new ShapeO(Color.YELLOW);
-    private final ShapeS shapeS = new ShapeS(Color.GREEN);
-    private final ShapeT shapeT = new ShapeT(Color.MAGENTA);
-    private final ShapeZ shapeZ = new ShapeZ(Color.RED);
-
-    Tetrimino currentShape;
 
     public PainelGame() {
 
         setBottom(PainelGame.TOP + HEIGHT);
 
         PainelGame.SHAPE_POSITION_X = (PainelGame.LEFT + WIDHT /2) - Tetrimino.SIZE;
-        PainelGame.SHAPE_POSITION_Y = 0;
+        PainelGame.SHAPE_POSITION_Y = 20;
 
-        shapes.add(shapeI);
-        shapes.add(shapeJ);
-        shapes.add(shapeL);
-        shapes.add(shapeO);
-        shapes.add(shapeS);
-        shapes.add(shapeT);
-        shapes.add(shapeZ);
+        //currentShape = tetriminoManager.getCurrentShape();
+        //nextShape = tetriminoManager.getCurrentShape();
 
-        this.currentShape = (Tetrimino) shapes.get(new Random().nextInt(shapes.size()));
-        //this.currentShape = shapeJ;
-        currentShape.setX(PainelGame.SHAPE_POSITION_X);
-        currentShape.setY(PainelGame.SHAPE_POSITION_Y);
+        tetriminoManager.getNextShape().setX(500);
+        tetriminoManager.getNextShape().setY(550);
+        tetriminoManager.getCurrentShape().setX(PainelGame.SHAPE_POSITION_X);
+        tetriminoManager.getCurrentShape().setY(PainelGame.SHAPE_POSITION_Y);
+
     }
 
     public void update() {
         setTimer(getTimer() + 1);
 
-        if (getTimer() % 60 == 0) {
+        if (getTimer() % (int) score.getSpeed() == 0) {
 
             PainelGame.SHAPE_POSITION_Y+= Tetrimino.SIZE;
 
-            // Essa logica não esta legal, muitas erros, necessário refazer
-            if (this.puzzle.hasCollided(this.currentShape, "normal")) {
+            if (this.puzzle.hasCollided(tetriminoManager.getCurrentShape(), "normal")) {
 
-                puzzle.mergeShapeToMatrix(this.currentShape);
+                puzzle.mergeShapeToMatrix(tetriminoManager.getCurrentShape());
                 puzzle.hasCompleteRow();
 
                 PainelGame.SHAPE_POSITION_X = PainelGame.LEFT + WIDHT /2 - Tetrimino.SIZE;
-                PainelGame.SHAPE_POSITION_Y = 0;
+                PainelGame.SHAPE_POSITION_Y = 20;
                 this.randomShape();
 
             }
@@ -93,23 +81,61 @@ public class PainelGame {
         g2d.setStroke(new BasicStroke(4f));
         g2d.drawRect(PainelGame.LEFT-4, PainelGame.TOP-4, WIDHT+8, HEIGHT+8);
 
-        currentShape.setX(PainelGame.SHAPE_POSITION_X);
-        currentShape.setY(PainelGame.SHAPE_POSITION_Y);
-        currentShape.draw(g2d);
+        g2d.setColor(Color.WHITE);
+        g2d.setStroke(new BasicStroke(4f));
+        g2d.drawRect(420, 494, 200, 150);
+
+        g2d.setFont(new Font("Arial", Font.BOLD, 24));
+        g2d.drawString("NEXT", 490, 530);
+
+        g2d.setFont(new Font("Arial", Font.BOLD, 24));
+        g2d.drawString("Tetris Game in Java", 420, 50);
+
+        g2d.setFont(new Font("Arial", Font.PLAIN, 22));
+        g2d.drawString("SCORE", 420, 120);
+
+        g2d.setFont(new Font("Arial", Font.PLAIN, 16));
+        g2d.drawString(Integer.toString(score.getScore()), 420, 145);
+
+        g2d.setFont(new Font("Arial", Font.PLAIN, 22));
+        g2d.drawString("LINES", 420, 190);
+
+        g2d.setFont(new Font("Arial", Font.PLAIN, 16));
+        g2d.drawString(Integer.toString(score.getTotalLines()), 420, 215);
+
+        g2d.setFont(new Font("Arial", Font.PLAIN, 22));
+        g2d.drawString("LEVEL", 420, 260);
+
+        g2d.setFont(new Font("Arial", Font.PLAIN, 16));
+        g2d.drawString(Integer.toString(score.getLevel()), 420, 285);
+
+        tetriminoManager.getNextShape().setX(500);
+        tetriminoManager.getNextShape().setY(550);
+        tetriminoManager.getCurrentShape().setX(PainelGame.SHAPE_POSITION_X);
+        tetriminoManager.getCurrentShape().setY(PainelGame.SHAPE_POSITION_Y);
+
+        tetriminoManager.getCurrentShape().buildShape();
+        tetriminoManager.getNextShape().buildShape();
+
+        tetriminoManager.getNextShape().draw(g2d);
 
         this.puzzle.clearBoard();
-        this.puzzle.addTemporaryShapeToMatrix(this.currentShape);
+        this.puzzle.addTemporaryShapeToMatrix(tetriminoManager.getCurrentShape());
         this.puzzle.draw(g2d);
     }
 
     public void randomShape() {
-        this.currentShape = (Tetrimino) shapes.get(new Random().nextInt(shapes.size()));
-        currentShape.setX(PainelGame.SHAPE_POSITION_X);
-        currentShape.setY(PainelGame.SHAPE_POSITION_Y);
+
+        tetriminoManager.updateShapes();
+
+        tetriminoManager.getCurrentShape().setX(PainelGame.SHAPE_POSITION_X);
+        tetriminoManager.getCurrentShape().setY(PainelGame.SHAPE_POSITION_Y);
+        tetriminoManager.getCurrentShape().buildShape();
+
     }
 
     public void changeRotatedShape() {
-        currentShape.changeRotated();
+        tetriminoManager.getCurrentShape().changeRotated();
     }
 
     public int getBottom() {
