@@ -97,18 +97,24 @@ public class GameEngine extends JPanel implements Runnable, KeyListener {
         // Podemos observar que o método pm.puzzle.hasCollided, retorna um booleano, e na construção da logica
         // foi colocado um ! na frente, sendo esta uma negação
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            if (!pm.puzzle.hasCollided(pm.tetriminoManager.getCurrentShape(), "right")) {
+            if (!pm.puzzle.hasCollided(pm.tetriminoManager.getCurrentShape().block, "right")) {
                 PainelGame.SHAPE_POSITION_X+= Tetrimino.SIZE;
             }
         }
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            if (!pm.puzzle.hasCollided(pm.tetriminoManager.getCurrentShape(), "left")) {
+            if (!pm.puzzle.hasCollided(pm.tetriminoManager.getCurrentShape().block, "left")) {
                 PainelGame.SHAPE_POSITION_X-= Tetrimino.SIZE;
             }
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            if (!pm.puzzle.hasCollided(pm.tetriminoManager.getCurrentShape(), "down")) {
-                PainelGame.SHAPE_POSITION_Y+= Tetrimino.SIZE;
+            Rectangle[] cloneRectangle = pm.tetriminoManager.getCurrentShape().cloneRectangle();
+            cloneRectangle[0].y += Tetrimino.SIZE;
+            cloneRectangle[1].y += Tetrimino.SIZE;
+            cloneRectangle[2].y += Tetrimino.SIZE;
+            cloneRectangle[3].y += Tetrimino.SIZE;
+
+            if (!pm.puzzle.hasCollided(cloneRectangle, "down")) {
+                if (!PainelGame.collided) PainelGame.SHAPE_POSITION_Y+= Tetrimino.SIZE;
             }
         }
         if (e.getKeyCode() == KeyEvent.VK_UP) {

@@ -13,6 +13,7 @@ public class PainelGame {
 
     // Atributos para a manipulação do game
     private int timer = 0;
+    public static boolean collided = false;
     public static int SHAPE_POSITION_X;
     public static int SHAPE_POSITION_Y;
 
@@ -45,23 +46,26 @@ public class PainelGame {
 
         setTimer(getTimer() + 1);
         if (getTimer() % (int) score.getSpeed() == 0) {
-            // Controle de gravidade do tetris adicionando um valor ao Y do mesmo
-            PainelGame.SHAPE_POSITION_Y+= Tetrimino.SIZE;
+
+
 
             // Nesse bloco temos a verificação se existe uma colisão, de forma vertical ou seja de cima para baixo.
             // caso sim entra no bloco e executas as seguintes ações:
             //
-            // 1-> Desenha o tetria a matrix que controla os blocos já fixos
+            // 1-> Desenha o tetris a matrix que controla os blocos já fixos
             // 2-> Verifica se com esse novo tetris fixado a matrix existe alguma linha completa
             // 3-> Reseta as informações de X e Y
             // 4-> Gera um novo tetris
-            if (this.puzzle.hasCollided(tetriminoManager.getCurrentShape(), "normal")) {
+            PainelGame.collided = (this.puzzle.hasCollided(tetriminoManager.getCurrentShape().block, "normal"));
+            if (PainelGame.collided) {
                 puzzle.mergeShapeToMatrix(tetriminoManager.getCurrentShape());
                 puzzle.hasCompleteRow();
                 PainelGame.SHAPE_POSITION_X = PainelGame.LEFT + WIDHT /2 - Tetrimino.SIZE;
                 PainelGame.SHAPE_POSITION_Y = 20;
                 this.randomShape();
             }
+            // Controle de gravidade do tetris adicionando um valor ao Y do mesmo
+            else PainelGame.SHAPE_POSITION_Y+= Tetrimino.SIZE;
         }
     }
 

@@ -79,6 +79,26 @@ public class Tetrimino implements Cloneable {
         this.shape = rotated;
     }
 
+    public Rectangle[] cloneRectangle() {
+        Rectangle[] cloneRectangle = new Rectangle[4];
+
+        cloneRectangle[0] = new Rectangle();
+        cloneRectangle[1] = new Rectangle();
+        cloneRectangle[2] = new Rectangle();
+        cloneRectangle[3] = new Rectangle();
+
+
+
+        for (int i = 0; i < this.block.length; i++) {
+            cloneRectangle[i].y = this.block[i].y;
+            cloneRectangle[i].x = this.block[i].x;
+            cloneRectangle[i].width = this.block[i].width;
+            cloneRectangle[i].height = this.block[i].height;
+        }
+
+        return cloneRectangle;
+    }
+
     public Color getColor() {
         return this.color;
     }

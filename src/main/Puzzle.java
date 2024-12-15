@@ -129,11 +129,11 @@ public class Puzzle {
     //
     // Acredito que esse método poderia ter cido dividido em pelo menos três metodos, pois usei um atributo direction,
     // para saber de onde ele foi invocado e o que fazer em cada situação.
-    public boolean hasCollided(Tetrimino shape, String direction) {
+    public boolean hasCollided(Rectangle[] blocks, String direction) {
 
         // Quando invocado eu pego os blocos da forma atual e repasso todos, caso algum colida com alguma extremidade
         // ou mesmo outro bloco, o for e método são interrompidos com um return
-        for (Rectangle rectangle : shape.getBlock()) {
+        for (Rectangle rectangle : blocks) {
 
             // Converte para coordenadas da matrix
             int x = this.coordinateConverter(rectangle.x);
@@ -153,6 +153,8 @@ public class Puzzle {
                         return true;
                     }
                 }
+
+
                 // Verifica colisão na extremidade esquerda e com blocos na esquerda
                 if (direction.equals("right")) {
                     if (x > this.board[y].length) {
