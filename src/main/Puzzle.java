@@ -107,6 +107,18 @@ public class Puzzle {
             }
         }
     }
+
+    // Método responsável por verificar se houve construção na linha 0 da matriz, se sim, retorna como true
+    public Boolean hasGameOver() {
+
+        for (int i = 0; i < this.board[0].length; i++) {
+            if (this.board[1][i].isBuild()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Esse método apaga da matriz todas os retângulos setados como moving=true.
     // Isso é necessário, pois esse método é chamado para limpar a matrix para depois adicionar a forma novamente,
     // contendo as informações de X e Y atualizadas. Assim se faz o movimento da forma descendo!

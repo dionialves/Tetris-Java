@@ -114,7 +114,7 @@ public class GameEngine extends JPanel implements Runnable, KeyListener {
             cloneRectangle[3].y += Tetrimino.SIZE;
 
             if (!pm.puzzle.hasCollided(cloneRectangle, "down")) {
-                if (!PainelGame.collided) PainelGame.SHAPE_POSITION_Y+= Tetrimino.SIZE;
+                PainelGame.SHAPE_POSITION_Y+= Tetrimino.SIZE;
             }
         }
         if (e.getKeyCode() == KeyEvent.VK_UP) {
